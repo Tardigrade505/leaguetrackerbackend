@@ -1,0 +1,15 @@
+baralIn,1,0,common
+bounty,0,3,common
+burstOfSpeed,1,0,uncommon
+calculatedRisk,1,0,uncommon
+flawlessVictory,2,0,mythicrare
+flood,1,0,rare
+hellbent,1,0,common
+imSoFancy,1,0,uncommon
+informationOverload,1,0,common
+overKill,1,0,common
+sadButTrue,1,0,uncommon
+theActualUltimatePower,1,0,uncommon
+thirdTimesTheCharm,1,0,common
+ultimatePower,1,0,uncommon
+yaBasic,1,0,uncommon
