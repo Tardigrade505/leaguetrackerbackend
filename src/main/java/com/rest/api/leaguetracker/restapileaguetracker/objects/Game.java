@@ -51,10 +51,9 @@ public class Game {
      * @return
      */
     public static Game generateNewGame(final int seasonId, final List<String> playersInGame) {
-        String pathToAchievementsFile = BackendUtils.getProjectBasePath() + "src/main/resources/achievements.txt";
         List<PlayerTable> tables = determineTables(playersInGame);
-        List<Achievement> achievements = Achievement.generateAchievements(3, pathToAchievementsFile); // TODO: make achievements file name not hard-coded
-        Achievement bonusAchievement = Achievement.generateBonusAchievement(achievements, pathToAchievementsFile);
+        List<Achievement> achievements = new Achievement().generateAchievements(3, "achievements.txt"); // TODO: make achievements file name not hard-coded
+        Achievement bonusAchievement = new Achievement().generateBonusAchievement(achievements, "achievements.txt");
         achievements.add(bonusAchievement);
         return new Game(seasonId, tables, achievements, bonusAchievement);
     }
