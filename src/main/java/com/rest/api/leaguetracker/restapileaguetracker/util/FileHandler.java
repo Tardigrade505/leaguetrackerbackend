@@ -1,7 +1,11 @@
 package com.rest.api.leaguetracker.restapileaguetracker.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +19,16 @@ import java.util.List;
  * An API that exposes functionality for reading/writing to the database
  */
 public class FileHandler {
+
+    public List<String> readFileInJar(final InputStream in) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            lines.add(line);
+        }
+        return lines;
+    }
     /**
      * Creates a new directory at the specified path.
      * Does not create subdirectories along the way.

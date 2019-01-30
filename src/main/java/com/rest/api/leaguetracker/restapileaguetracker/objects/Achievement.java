@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,14 +42,16 @@ public class Achievement {
         this.rarity = rarity;
     }
 
+    public Achievement() {} // Default constructor
+
     /**
      * A method that randomly generates a number of achievements that it reads from an achievement file
      * @param numberOfAchievements - the number of achievements to generate
-     * @param pathToAchievementsFile - the full path to the achievements file
+     * @param fileName - the name of the achievements file
      * @return a list of achievements
      */
-    public static List<Achievement> generateAchievements(final int numberOfAchievements, final String pathToAchievementsFile) {
-        List<Achievement> achievementPool = importAchievements(pathToAchievementsFile);
+    public List<Achievement> generateAchievements(final int numberOfAchievements, final String fileName) {
+        List<Achievement> achievementPool = importAchievements(fileName);
         List<Achievement> achievements = new ArrayList<>();
 
         // Group the achievement pool by rarity
@@ -106,15 +111,22 @@ public class Achievement {
 
     /**
      * Reads the achievements file and parses its contents into a list of achievements
-     * @param pathToAchievementsFile
+     * @param fileName
      * @return a full list of all the achievements
      */
-    public static List<Achievement> importAchievements(String pathToAchievementsFile) {
+    public List<Achievement> importAchievements(String fileName) {
         List<Achievement> importedAchievements = new ArrayList<>();
 
-        List<String> rawAchievements = new FileHandler().readFile(pathToAchievementsFile);
+        InputStream in = getClass().getResourceAsStream("/" + fileName);
+        List<String> rawAchievements = null;
+        try {
+            rawAchievements = new FileHandler().readFileInJar(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
         System.out.println("Raw achievemnts = " + rawAchievements);
-        String achievementsImagesBasePath = pathToAchievementsFile.replace(Constants.ACHIEVEMENTS_FILE, ""); // TODO: update when achievements.txt is not hard-coded
+        String achievementsImagesBasePath = fileName.replace(Constants.ACHIEVEMENTS_FILE, ""); // TODO: update when achievements.txt is not hard-coded
         achievementsImagesBasePath = achievementsImagesBasePath + Constants.ACHIEVEMENTS_IMAGES_DIR + "/";
 
         for (String rawAchievement : rawAchievements) {
@@ -128,11 +140,11 @@ public class Achievement {
 
     /**
      * Chooses a random common achievement from the achievement pool
-     * @param pathToAchievementsFile - the full path to the achievement file
+     * @param fileName - the full path to the achievement file
      * @return a random common achievement
      */
-    public static Achievement generateBonusAchievement(final List<Achievement> alreadySelectedAchievements, final String pathToAchievementsFile) {
-        List<Achievement> achievementPool = importAchievements(pathToAchievementsFile);
+    public Achievement generateBonusAchievement(final List<Achievement> alreadySelectedAchievements, final String fileName) {
+        List<Achievement> achievementPool = importAchievements(fileName);
         List<Achievement> commonAchievementPool = new ArrayList<>();
 
         for (Achievement achievement : achievementPool) {

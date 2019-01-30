@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@CrossOrigin
 @RestController
 public
 class AchievementController {
@@ -30,7 +31,6 @@ class AchievementController {
     }
 
     // Aggregate root
-    @CrossOrigin(origins = "http://localhost:63342")
     @GetMapping("/achievements")
     public Resources<Resource<Achievement>> all() {
         List<Resource<Achievement>> achievements = repository.findAll().stream()

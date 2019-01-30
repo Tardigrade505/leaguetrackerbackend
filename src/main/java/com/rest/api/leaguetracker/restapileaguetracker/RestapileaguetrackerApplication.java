@@ -15,15 +15,5 @@ public class RestapileaguetrackerApplication {
 
     }
 
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurerAdapter() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/seasons").allowedOrigins("http://localhost:63342");
-//            }
-//        };
-//    }
-
 }
 

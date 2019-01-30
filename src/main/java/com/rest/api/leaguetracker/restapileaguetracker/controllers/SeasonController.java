@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@CrossOrigin
 @RestController
 public
 class SeasonController {
@@ -31,7 +32,6 @@ class SeasonController {
     }
 
     // Aggregate root
-    @CrossOrigin(origins = "http://localhost:63342")
     @GetMapping("/seasons")
     public Resources<Resource<Season>> all() {
         List<Resource<Season>> seasons = repository.findAll().stream()
@@ -41,7 +41,6 @@ class SeasonController {
                 linkTo(methodOn(SeasonController.class).all()).withSelfRel());
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @PostMapping("/seasons")
     public ResponseEntity<Resource<Season>> newSeason(@RequestBody Season newSeason) throws URISyntaxException {
         Resource<Season> resource = assembler.toResource(repository.save(newSeason));
@@ -57,7 +56,6 @@ class SeasonController {
         return replaceSeason(season, id);
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @GetMapping("/seasons/{id}/players")
     public Resources<Player> allPlayers(@PathVariable Long id) {
         Resource<Season> resource =  one(id);
