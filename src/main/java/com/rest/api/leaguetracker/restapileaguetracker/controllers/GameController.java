@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class GameController {
     private final GameRepository repository;
@@ -33,7 +34,6 @@ public class GameController {
         this.seasonController = seasonController;
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @PostMapping("/games/results")
     public ResponseEntity<Resource<Game>> postResults(@RequestBody GameResults results) throws URISyntaxException {
         System.out.println("Storing results");
@@ -67,8 +67,7 @@ public class GameController {
         }
 
         // Update the achievement winners
-        List<Achievement> achievements = Achievement.importAchievements(
-                BackendUtils.getProjectBasePath() + "src/main/resources/achievements.txt");
+        List<Achievement> achievements = new Achievement().importAchievements("achievements.txt");
         for (String achievement : results.getAchievementWinners().keySet()) {
             System.out.println("Going through cheevos");
             if (!"none".equals(results.getAchievementWinners().get(achievement))) {
@@ -107,7 +106,6 @@ public class GameController {
     }
 
     // Aggregate root
-    @CrossOrigin(origins = "http://localhost:63342")
     @GetMapping("/games")
     public Resource<Game> getNewGame(@RequestParam int seasonId, @RequestParam List<String> playerList) {
         Game game = Game.generateNewGame(seasonId, playerList);
@@ -126,7 +124,6 @@ public class GameController {
         return assembler.toResource(game);
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @PostMapping("/games")
     public ResponseEntity<Resource<Game>> newGame(@RequestBody Game newGame) throws URISyntaxException {
         Resource<Game> resource = assembler.toResource(repository.save(newGame));
