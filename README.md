@@ -69,6 +69,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## Authors
 
 **Elliot Radsliff**
+**Ryan Greene**
 
 See also the list of [contributors](https://github.com/Tardigrade505/leaguetrackerbackend/graphs/contributors) who participated in this project.
 
