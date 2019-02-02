@@ -7,16 +7,21 @@ import com.rest.api.leaguetracker.restapileaguetracker.objects.Achievement;
 import com.rest.api.leaguetracker.restapileaguetracker.objects.Game;
 import com.rest.api.leaguetracker.restapileaguetracker.objects.Player;
 import com.rest.api.leaguetracker.restapileaguetracker.objects.helper.GameResults;
+import com.rest.api.leaguetracker.restapileaguetracker.objects.helper.TableResult;
 import com.rest.api.leaguetracker.restapileaguetracker.repositories.GameRepository;
-import com.rest.api.leaguetracker.restapileaguetracker.util.BackendUtils;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin
@@ -35,67 +40,56 @@ public class GameController {
     }
 
     @PostMapping("/games/results")
-    public ResponseEntity<Resource<Game>> postResults(@RequestBody GameResults results) throws URISyntaxException {
+    public ResponseEntity<Resource<Game>> postResults(@RequestBody GameResults gameResults) throws URISyntaxException {
         System.out.println("Storing results");
-        System.out.println("Season ID = " + results.getSeasonId());
-        System.out.println("JSON received = " + results);
-        Player currentPlayer;
-        // Update the winners
-        for (String player: results.getWinners()) {
-            System.out.println("Going through winners");
+        System.out.println("Season ID = " + gameResults.getSeasonId());
+        System.out.println("JSON received = " + gameResults);
+
+        for (TableResult result : gameResults.getTableResults()) {
+            // Update the winners
             // Get the player and update their points value
-            currentPlayer = findPlayerByName(player, results.getSeasonId());
+            Player currentPlayer = findPlayerByName(result.getWinner(), gameResults.getSeasonId());
             System.out.println("Got current player");
             System.out.println("current player = " + currentPlayer);
 
-            // Update and replace the playerController with the updated points value
-            assert currentPlayer != null;
+            // Update and replace the player with the updated points value
             currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + LeagueConstants.POINTS_FOR_WIN);
             this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
-        }
 
-        // Update the seconders
-        for (String player: results.getSeconders()) {
-            System.out.println("Going through seconders");
-            // Get the player and update their points value
-            currentPlayer = findPlayerByName(player, results.getSeasonId());
-
-            // Update and replace the playerController with the updated points value
-            assert currentPlayer != null;
-            currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + LeagueConstants.POINTS_FOR_SECOND);
-            this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
-        }
-
-        // Update the achievement winners
-        List<Achievement> achievements = new Achievement().importAchievements("achievements.txt");
-        for (String achievement : results.getAchievementWinners().keySet()) {
-            System.out.println("Going through cheevos");
-            if (!"none".equals(results.getAchievementWinners().get(achievement))) {
-                System.out.println("Winner wasnt none");
+            // Update the seconders
+            for (String player : result.getSeconders()) {
                 // Get the player and update their points value
-                currentPlayer = findPlayerByName(results.getAchievementWinners().get(achievement), results.getSeasonId());
+                currentPlayer = findPlayerByName(player, gameResults.getSeasonId());
 
-                // Update and replace the player with the updated points value
-                for (Achievement achievementObject : achievements) {
-                    if (achievement.equals(achievementObject.getName())) {
-                        System.out.println("Current player = " + currentPlayer);
-                        System.out.println("AchievementObject = " + achievementObject);
-                        currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + achievementObject.getPointsValue());
-                        this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
+                // Update and replace the playerController with the updated points value
+                currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + LeagueConstants.POINTS_FOR_SECOND);
+                this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
+            }
+
+            // Update the achievement winners
+            List<Achievement> achievements = new Achievement().importAchievements("achievements.txt");
+            for (String achievement : result.getAchievementWinners().keySet()) {
+                if (!"none".equals(result.getAchievementWinners().get(achievement))) {
+
+                    // Get the player and update their points value
+                    currentPlayer = findPlayerByName(result.getAchievementWinners().get(achievement), gameResults.getSeasonId());
+
+                    // Update and replace the player with the updated points value
+                    for (Achievement achievementObject : achievements) {
+                        if (achievement.equals(achievementObject.getName())) {
+                            currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + achievementObject.getPointsValue());
+                            this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
+                        }
                     }
                 }
             }
-        }
 
-        // Update the participants
-        for (String participantName : results.getParticipants()) {
-            System.out.println("1");
-            currentPlayer = findPlayerByName(participantName, results.getSeasonId());
-            System.out.println("2");
-            currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + LeagueConstants.POINTS_FOR_PARTICIPATION);
-            System.out.println("3");
-            playerController.replacePlayer(currentPlayer, currentPlayer.getId());
-            System.out.println("4");
+            // Update the participants
+            for (String participantName : result.getParticipants()) {
+                currentPlayer = findPlayerByName(participantName, gameResults.getSeasonId());
+                currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + LeagueConstants.POINTS_FOR_PARTICIPATION);
+                playerController.replacePlayer(currentPlayer, currentPlayer.getId());
+            }
         }
 
 
