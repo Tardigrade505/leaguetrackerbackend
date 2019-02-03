@@ -18,12 +18,12 @@ class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(SeasonRepository repository) {
         return args -> {
-            List<Player> season1PlayerList = Arrays.asList(new Player("Elliot", 0),
-                    new Player("Ryan", 0), new Player("Zack", 0));
-            List<Player> season2PlayerList = Arrays.asList(new Player("Elliot", 4),
-                    new Player("Ryan", 0), new Player("Zack", 2),
-                    new Player("Peter", 0), new Player("Brandon", 1),
-                    new Player("Mario", 5));
+            List<Player> season1PlayerList = Arrays.asList(new Player("Elliot", 0, 0),
+                    new Player("Ryan", 0, 0), new Player("Zack", 0, 0));
+            List<Player> season2PlayerList = Arrays.asList(new Player("Elliot", 4, 0),
+                    new Player("Ryan", 0, 0), new Player("Zack", 2, 0),
+                    new Player("Peter", 0, 0), new Player("Brandon", 1, 0),
+                    new Player("Mario", 5, 0));
             log.info("Preloading " + repository.save(new Season("Brawlin' on a Budget", season1PlayerList, null)));
             log.info("Preloading " + repository.save(new Season("Commander vs. the World", season2PlayerList, null)));
         };

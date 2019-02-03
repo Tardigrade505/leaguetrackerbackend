@@ -78,6 +78,7 @@ public class GameController {
                     for (Achievement achievementObject : achievements) {
                         if (achievement.equals(achievementObject.getName())) {
                             currentPlayer.setTotalPoints(currentPlayer.getTotalPoints() + achievementObject.getPointsValue());
+                            currentPlayer.setBonusMoney(currentPlayer.getBonusMoney() + achievementObject.getDollarValue());
                             this.playerController.replacePlayer(currentPlayer, currentPlayer.getId());
                         }
                     }
